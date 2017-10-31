@@ -22,6 +22,17 @@ public class FindPoliticalDonors {
         return true;
     }
 
+    public static boolean isTransDateValid(String transDate) {
+        DateFormat format = new SimpleDateFormat("mmddyyyy");
+        format.setLenient(false);
+        try {
+            format.parse(transDate); //=> Ok, rolls to "Wed Mar 03 00:00:00 PST 2010".
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static void parseInput(String fileName)
     {
         // This will reference one line at a time
@@ -62,10 +73,54 @@ public class FindPoliticalDonors {
                     String zipCode = entry[10].substring(0, 5);
                     String transDate = entry[13];
                     boolean isZipCodeValid = isZipCodeValid(zipCode);
+                    boolean isTransDateValid = isTransDateValid(transDate);
 
+                    if (isZipCodeValid) {
+                        // Check if current cmteid maps to zipcode-to-trans map
+                        HashMap<String,TransByZip> zipCodeToTransByZip = cmteIdToZipCodeMap.get(cmteId) != null 
+                                                                         ? cmteIdToZipCodeMap.get(cmteId) 
+                                                                         : new HashMap<String, TransByZip>();
+
+                        TransByZip transByZip = zipCodeToTransByZip.get(zipCode) != null 
+                                                ? zipCodeToTransByZip.get(zipCode) 
+                                                : new TransByZip(); 
+                        
+                        // Str to integer
+                        Integer transAmtInteger = Integer.parseInt(transAmt);
+
+                        // Update median, total amount and contributions for this (id, zip)
+                        transByZip.update(transAmtInteger);
+
+                        // Track new zipcode to transactions by zipcode
+                        if (!zipCodeToTransByZip.containsKey(zipCode)) {
+                           zipCodeToTransByZip.put(zipCode, transByZip);
+                        }
+
+                        // Track new cmteid to zipCodeMap
+                        if(!cmteIdToZipCodeMap.containsKey(cmteId)) {
+                           cmteIdToZipCodeMap.put(cmteId, zipCodeToTransByZip); 
+                        }
+
+                        String entryStr = transByZip.toString(cmteId, zipCode);
+                        System.out.println(entryStr);
+/*
+                        if (transByZip != null) {
+                            String entryStr = transByZip.toString();
+                        } else {
+                            transByZip = new TransByZip();
+                            transByZip.update(transAmtInteger);
+                            // Track zipcode to transactions
+                            zipCodeToTransByZip.put(zipCode, transByZip);
+                            String entryStr = transByZip.toString();
+*/
+                        }
+                    }
+                    // if (isTransDateValid) {
+                    // }
+/*
+                    Integer transAmtInteger = Integer.parseInt(transAmt);
                     // Check if cmteId is a key in the zipCodeToTransByZip
                     HashMap<String,TransByZip> zipCodeToTransByZip = cmteIdToZipCodeMap.get(cmteId);
-                    Integer transAmtInteger = Integer.parseInt(transAmt);
                     TransByZip transByZip;
 
                     // CMTE_ID is mapped to zip code map
@@ -168,11 +223,10 @@ public class FindPoliticalDonors {
                             cmteIdToZipCodeMap.put(cmteId, zipCodeToTransByZip);
                         }
                     }
-
+*/
                     // Check if cmteId is a key in the cmteIdToTransDateMap
 
                 }
-            }
             // for(Map.Entry m:cmteIdToZip.entrySet()){  
             //     System.out.println(m.getKey()+" "+m.getValue());  
             // }  

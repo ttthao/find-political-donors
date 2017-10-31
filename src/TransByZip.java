@@ -4,11 +4,9 @@ import java.math.*;
 public class TransByZip {
     PriorityQueue<Integer> lowers;
     PriorityQueue<Integer> highers;
-    // Double runningMedian;
     Integer runningMedian;
     Integer totalContributions;
     Integer totalTransAmount;
-    // Double totalTransAmount;
 
    public TransByZip() {
        lowers = new PriorityQueue<Integer> ( new Comparator<Integer> () {
@@ -19,14 +17,31 @@ public class TransByZip {
        
        highers = new PriorityQueue<Integer> ();
 
-       // Watch out for rounding errors
-    //    runningMedian = 0.0;
        runningMedian = 0;
 
        totalContributions = 0;
 
-    //    totalTransAmount = 0.0;
        totalTransAmount = 0;
+   }
+
+   public void update(int transAmt) {
+       addTransAmt(transAmt);
+
+       // Update streaming total amount
+       setTotalAmount(transAmt);
+
+       // Update streaming total contributions
+       setTotalContributions();
+
+       // Rebalance
+       rebalanceHeaps();
+   }
+
+   public String toString(String cmteId, String zipCode) {
+       Integer runningMedium = getMedian();
+       Integer totalContributions = getTotalContributions();
+       Integer totalAmount = getTotalAmount();
+       return String.format("%s|%s|%s|%s|%s", cmteId, zipCode, Integer.toString(runningMedium), Integer.toString(totalContributions), Integer.toString(totalAmount));
    }
 
    public void addTransAmt(int transAmt) {
@@ -51,9 +66,6 @@ public class TransByZip {
        PriorityQueue<Integer> smallerHeap = this.lowers.size() > this.highers.size() ? this.highers : this.lowers;
 
        if (biggerHeap.size() == smallerHeap.size()) {
-        //    return (biggerHeap.peek() + smallerHeap.peek())/2;
-        //     System.out.println((int) Math.ceil(a / 2));
-            // System.out.println((biggerHeap.peek() + smallerHeap.peek())/2.0);
            return (int) Math.ceil((biggerHeap.peek() + smallerHeap.peek())/2.0);
        } else {
            return biggerHeap.peek();
