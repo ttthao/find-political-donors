@@ -4,3 +4,5 @@
 dependencies
 *.class
 .DS_STORE
+.ipynb_checkpoints
+.vscode

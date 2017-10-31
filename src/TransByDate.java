@@ -1,15 +1,15 @@
 import java.util.*;
 import java.math.*;
 
-public class TransByZip {
+public class TransByDate {
     PriorityQueue<Integer> lowers;
     PriorityQueue<Integer> highers;
-    Integer runningMedian;
+    Integer median;
     Integer totalContributions;
     Integer totalTransAmount;
 
-   // Priority queue/heaps to balance half of the input transaction
-   public TransByZip() {
+    // Priority queue/heaps to balance half of the input transaction
+   public TransByDate() {
        lowers = new PriorityQueue<Integer> ( new Comparator<Integer> () {
            public int compare(Integer a, Integer b) {
                return -1 * a.compareTo(b);
@@ -17,7 +17,7 @@ public class TransByZip {
        });
        highers = new PriorityQueue<Integer> ();
        
-       runningMedian = 0;
+       median = 0;
        totalContributions = 0;
        totalTransAmount = 0;
    }
@@ -37,11 +37,11 @@ public class TransByZip {
    }
 
    // Output string for file writer
-   public String toString(String cmteId, String zipCode) {
-       Integer runningMedian = getMedian();
+   public String toString(String cmteId, String transDate) {
+       Integer median = getMedian();
        Integer totalContributions = getTotalContributions();
        Integer totalAmount = getTotalAmount();
-       return String.format("%s|%s|%s|%s|%s", cmteId, zipCode, Integer.toString(runningMedian), Integer.toString(totalContributions), Integer.toString(totalAmount));
+       return String.format("%s|%s|%s|%s|%s", cmteId, transDate, Integer.toString(median), Integer.toString(totalContributions), Integer.toString(totalAmount));
    }
 
    // Insert input's amount to one of the heaps
