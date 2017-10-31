@@ -1,30 +1,35 @@
 import java.util.*;
+import java.math.*;
 
 public class TransByZip {
-    PriorityQueue<Double> lowers;
-    PriorityQueue<Double> highers;
-    Double runningMedian;
+    PriorityQueue<Integer> lowers;
+    PriorityQueue<Integer> highers;
+    // Double runningMedian;
+    Integer runningMedian;
     Integer totalContributions;
-    Double totalTransAmount;
+    Integer totalTransAmount;
+    // Double totalTransAmount;
 
    public TransByZip() {
-       lowers = new PriorityQueue<Double> ( new Comparator<Double> () {
-           public int compare(Double a, Double b) {
+       lowers = new PriorityQueue<Integer> ( new Comparator<Integer> () {
+           public int compare(Integer a, Integer b) {
                return -1 * a.compareTo(b);
            }
        });
        
-       highers = new PriorityQueue<Double> ();
+       highers = new PriorityQueue<Integer> ();
 
        // Watch out for rounding errors
-       runningMedian = 0.0;
+    //    runningMedian = 0.0;
+       runningMedian = 0;
 
        totalContributions = 0;
 
-       totalTransAmount = 0.0;
+    //    totalTransAmount = 0.0;
+       totalTransAmount = 0;
    }
 
-   public void addTransAmt(double transAmt) {
+   public void addTransAmt(int transAmt) {
        if (this.lowers.size() == 0 || transAmt < this.lowers.peek()) {
            this.lowers.add(transAmt);
        } else {
@@ -33,20 +38,23 @@ public class TransByZip {
    }
 
    public void rebalanceHeaps() {
-       PriorityQueue<Double> biggerHeap = this.lowers.size() > this.highers.size() ? this.lowers : this.highers;
-       PriorityQueue<Double> smallerHeap = this.lowers.size() > this.highers.size() ? this.highers : this.lowers;
+       PriorityQueue<Integer> biggerHeap = this.lowers.size() > this.highers.size() ? this.lowers : this.highers;
+       PriorityQueue<Integer> smallerHeap = this.lowers.size() > this.highers.size() ? this.highers : this.lowers;
 
        if (biggerHeap.size() - smallerHeap.size() >= 2) {
            smallerHeap.add(biggerHeap.poll());
        }
    }
 
-   public double getMedian() {
-       PriorityQueue<Double> biggerHeap = this.lowers.size() > this.highers.size() ? this.lowers : this.highers;
-       PriorityQueue<Double> smallerHeap = this.lowers.size() > this.highers.size() ? this.highers : this.lowers;
+   public int getMedian() {
+       PriorityQueue<Integer> biggerHeap = this.lowers.size() > this.highers.size() ? this.lowers : this.highers;
+       PriorityQueue<Integer> smallerHeap = this.lowers.size() > this.highers.size() ? this.highers : this.lowers;
 
        if (biggerHeap.size() == smallerHeap.size()) {
-           return (biggerHeap.peek() + smallerHeap.peek())/2;
+        //    return (biggerHeap.peek() + smallerHeap.peek())/2;
+        //     System.out.println((int) Math.ceil(a / 2));
+            // System.out.println((biggerHeap.peek() + smallerHeap.peek())/2.0);
+           return (int) Math.ceil((biggerHeap.peek() + smallerHeap.peek())/2.0);
        } else {
            return biggerHeap.peek();
        }
@@ -56,7 +64,7 @@ public class TransByZip {
        this.totalContributions++;
    }
 
-   public void setTotalAmount(double transAmt) {
+   public void setTotalAmount(int transAmt) {
        this.totalTransAmount = this.totalTransAmount + transAmt;
    }
 
@@ -64,8 +72,8 @@ public class TransByZip {
        return this.totalContributions;
    }
    
-   public double getTotalAmount() {
-       return this.totalTransAmount;
+   public int getTotalAmount() {
+       return (int) this.totalTransAmount;
    }
 
 }

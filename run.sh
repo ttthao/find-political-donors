@@ -6,3 +6,6 @@
 
 javac src/*.java
 java -classpath ./src FindPoliticalDonors ./input/itcont.txt ./output/medianvals_by_zip.txt ./output/medianvals_by_date.txt 
+
+# javac Test.java
+# java Test

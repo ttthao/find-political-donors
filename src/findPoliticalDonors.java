@@ -65,14 +65,14 @@ public class FindPoliticalDonors {
 
                     // Check if cmteId is a key in the zipCodeToTransByZip
                     HashMap<String,TransByZip> zipCodeToTransByZip = cmteIdToZipCodeMap.get(cmteId);
-                    Double transAmtDouble = Double.parseDouble(transAmt);
+                    Integer transAmtInteger = Integer.parseInt(transAmt);
                     TransByZip transByZip;
 
                     // CMTE_ID is mapped to zip code map
                     if (zipCodeToTransByZip != null) {
                         // System.out.println("CMTE_ID exists in zipCodeToTransByZip");
 
-                        // Double transAmtDouble = Double.parseDouble(transAmt);
+                        // Integer transAmtInteger = Integer.parseInt(transAmt);
                         
                         // Get transactions per valid zipcode
                         // TransByZip transByZip = zipCodeToTransByZip.get(zipCode);
@@ -82,10 +82,10 @@ public class FindPoliticalDonors {
                         if (transByZip != null) {
                             // Update zip code
                             // Add transaction
-                            transByZip.addTransAmt(transAmtDouble);
+                            transByZip.addTransAmt(transAmtInteger);
                             
                             // Update streaming total amount
-                            transByZip.setTotalAmount(transAmtDouble);
+                            transByZip.setTotalAmount(transAmtInteger);
 
                             // Update streaming total contributions
                             transByZip.setTotalContributions();
@@ -93,12 +93,12 @@ public class FindPoliticalDonors {
                             // Rebalance
                             transByZip.rebalanceHeaps();
 
-                            Double runningMedium = transByZip.getMedian();
+                            Integer runningMedium = transByZip.getMedian();
                             Integer totalContributions = transByZip.getTotalContributions();
-                            Double totalAmount = transByZip.getTotalAmount();
+                            Integer totalAmount = transByZip.getTotalAmount();
 
                             // Check
-                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Double.toString(runningMedium), Integer.toString(totalContributions), Double.toString(totalAmount)));
+                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Integer.toString(runningMedium), Integer.toString(totalContributions), Integer.toString(totalAmount)));
 
                         } else {
                             // Current zip code is not in zip code map
@@ -108,10 +108,10 @@ public class FindPoliticalDonors {
                             transByZip = new TransByZip();
 
                             // Add transaction
-                            transByZip.addTransAmt(transAmtDouble);
+                            transByZip.addTransAmt(transAmtInteger);
                             
                             // Update streaming total amount
-                            transByZip.setTotalAmount(transAmtDouble);
+                            transByZip.setTotalAmount(transAmtInteger);
 
                             // Update streaming total contributions
                             transByZip.setTotalContributions();
@@ -119,12 +119,12 @@ public class FindPoliticalDonors {
                             // Rebalance
                             transByZip.rebalanceHeaps();
 
-                            Double runningMedium = transByZip.getMedian();
+                            Integer runningMedium = transByZip.getMedian();
                             Integer totalContributions = transByZip.getTotalContributions();
-                            Double totalAmount = transByZip.getTotalAmount();
+                            Integer totalAmount = transByZip.getTotalAmount();
 
                             // Check
-                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Double.toString(runningMedium), Integer.toString(totalContributions), Double.toString(totalAmount)));
+                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Integer.toString(runningMedium), Integer.toString(totalContributions), Integer.toString(totalAmount)));
                             
                             // Track zipcode to transactions
                             zipCodeToTransByZip.put(zipCode, transByZip);
@@ -132,7 +132,7 @@ public class FindPoliticalDonors {
 
                     } else {
                         if (isZipCodeValid) {
-                            // Double transAmtDouble = Double.parseDouble(transAmt);
+                            // Integer transAmtInteger = Integer.parseInt(transAmt);
 
                             // Create new TransByZip for current zip code
                             // TransByZip transByZip = new TransByZip();
@@ -143,10 +143,10 @@ public class FindPoliticalDonors {
                             zipCodeToTransByZip = new HashMap<String, TransByZip>();
                             
                             // Add transaction
-                            transByZip.addTransAmt(transAmtDouble);
+                            transByZip.addTransAmt(transAmtInteger);
 
                             // Update streaming total amount
-                            transByZip.setTotalAmount(transAmtDouble);
+                            transByZip.setTotalAmount(transAmtInteger);
 
                             // Update streaming total contributions
                             transByZip.setTotalContributions();
@@ -154,12 +154,12 @@ public class FindPoliticalDonors {
                             // Rebalance
                             transByZip.rebalanceHeaps();
 
-                            Double runningMedium = transByZip.getMedian();
+                            Integer runningMedium = transByZip.getMedian();
                             Integer totalContributions = transByZip.getTotalContributions();
-                            Double totalAmount = transByZip.getTotalAmount();
+                            Integer totalAmount = transByZip.getTotalAmount();
 
                             // Check
-                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Double.toString(runningMedium), Integer.toString(totalContributions), Double.toString(totalAmount)));
+                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Integer.toString(runningMedium), Integer.toString(totalContributions), Integer.toString(totalAmount)));
                             
                             // Track zipcode to transactions by zipcode
                             zipCodeToTransByZip.put(zipCode, transByZip);

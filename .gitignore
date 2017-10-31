@@ -3,3 +3,4 @@
 /src/politicalDonors/nbproject/private/
 dependencies
 *.class
+.DS_STORE
