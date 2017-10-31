@@ -2,6 +2,8 @@
 
 1. Input
     - C00629618|N|TER|P|201701230300133512|15C|IND|PEREZ
+    - intcont.txt has 21 columns
+    - indiv_header_file.csv has 21 column names
     - Relevant fields
         - CMTE_ID: identifies the flier, which for our purposes is the recipient of this contribution
             - Ignore entry if empty
@@ -15,11 +17,12 @@
             - Count entries that have OTHER_ID set to empty
 
 2. medianvals_by_zip.txt
+    - C00177436|30004|384|1|384
     - Running median
     - Total dollar amount
     - Total number of contributions by recipient and zip code
-    - 
 3. medianvals_by_date.txt
+    - C00177436|01312017|384|4|1382
     - median
     - total dollar amount
     - total number of contributions by recipient and date
