@@ -4,7 +4,24 @@ import java.text.*;
 import java.math.*;
 import java.util.regex.*;
 
-public class findPoliticalDonors {
+public class FindPoliticalDonors {
+    public static boolean isFields(String cmteId, String transAmt, String otherId) {
+        Boolean isOtherId = (otherId != null && otherId.isEmpty());
+        Boolean isCmteId = (cmteId != null && !cmteId.isEmpty());
+        Boolean isTransAmt = (transAmt != null && !transAmt.isEmpty());
+
+        if (isCmteId && isTransAmt && isOtherId)
+            return true;
+        return false;
+    }
+
+    public static boolean isZipCodeValid(String zipCode) {
+        if (zipCode.length() < 5 || zipCode.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
     public static void parseInput(String fileName)
     {
         // This will reference one line at a time
@@ -12,6 +29,13 @@ public class findPoliticalDonors {
         
         // Breaks entries on pipes
         Pattern pattern = Pattern.compile("\\|");
+
+        // CMTE_ID to ZIP_CODE map
+        // HashMap<String,Integer> cmteIdToZip = new HashMap<String,Integer>();  
+        HashMap<String,HashMap<String,TransByZip>> cmteIdToZipCodeMap = new HashMap<String,HashMap<String,TransByZip>>();  
+
+        // CMTE_ID to  map
+        // HashMap<String,HashMap<String,TransByDate>> cmteIdToTransDateMap = new HashMap<String,HashMap<String,TransByDate>>();  
 
         try {
             // FileReader reads text files in the default encoding.
@@ -24,10 +48,134 @@ public class findPoliticalDonors {
                 // Split on '|'
                 String[] entry = pattern.split(line);
 
+                // Every field is a string
                 String cmteId = entry[0];
                 String transAmt = entry[14];
-                System.out.println(Arrays.toString(entry));
+                String otherId = entry[15];
+                boolean isFieldsValid = isFields(cmteId, transAmt, otherId);
+
+                // Skip invalid entries
+                if (isFieldsValid) {
+                    // Sort hm keys: https://stackoverflow.com/questions/9047090/how-to-sort-hashmap-keys
+                    // Store map in map: https://stackoverflow.com/questions/5056708/storing-hashmap-in-a-hashmap
+
+                    String zipCode = entry[10].substring(0, 5);
+                    String transDate = entry[13];
+                    boolean isZipCodeValid = isZipCodeValid(zipCode);
+
+                    // Check if cmteId is a key in the zipCodeToTransByZip
+                    HashMap<String,TransByZip> zipCodeToTransByZip = cmteIdToZipCodeMap.get(cmteId);
+                    Double transAmtDouble = Double.parseDouble(transAmt);
+                    TransByZip transByZip;
+
+                    // CMTE_ID is mapped to zip code map
+                    if (zipCodeToTransByZip != null) {
+                        // System.out.println("CMTE_ID exists in zipCodeToTransByZip");
+
+                        // Double transAmtDouble = Double.parseDouble(transAmt);
+                        
+                        // Get transactions per valid zipcode
+                        // TransByZip transByZip = zipCodeToTransByZip.get(zipCode);
+                        transByZip = zipCodeToTransByZip.get(zipCode);
+                        
+                        // Current zip code is mapped to transactions by zipcode object
+                        if (transByZip != null) {
+                            // Update zip code
+                            // Add transaction
+                            transByZip.addTransAmt(transAmtDouble);
+                            
+                            // Update streaming total amount
+                            transByZip.setTotalAmount(transAmtDouble);
+
+                            // Update streaming total contributions
+                            transByZip.setTotalContributions();
+
+                            // Rebalance
+                            transByZip.rebalanceHeaps();
+
+                            Double runningMedium = transByZip.getMedian();
+                            Integer totalContributions = transByZip.getTotalContributions();
+                            Double totalAmount = transByZip.getTotalAmount();
+
+                            // Check
+                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Double.toString(runningMedium), Integer.toString(totalContributions), Double.toString(totalAmount)));
+
+                        } else {
+                            // Current zip code is not in zip code map
+
+                            // Create new TransByZip for current zip code
+                            // TransByZip transByZip = new TransByZip();
+                            transByZip = new TransByZip();
+
+                            // Add transaction
+                            transByZip.addTransAmt(transAmtDouble);
+                            
+                            // Update streaming total amount
+                            transByZip.setTotalAmount(transAmtDouble);
+
+                            // Update streaming total contributions
+                            transByZip.setTotalContributions();
+
+                            // Rebalance
+                            transByZip.rebalanceHeaps();
+
+                            Double runningMedium = transByZip.getMedian();
+                            Integer totalContributions = transByZip.getTotalContributions();
+                            Double totalAmount = transByZip.getTotalAmount();
+
+                            // Check
+                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Double.toString(runningMedium), Integer.toString(totalContributions), Double.toString(totalAmount)));
+                            
+                            // Track zipcode to transactions
+                            zipCodeToTransByZip.put(zipCode, transByZip);
+                        }
+
+                    } else {
+                        if (isZipCodeValid) {
+                            // Double transAmtDouble = Double.parseDouble(transAmt);
+
+                            // Create new TransByZip for current zip code
+                            // TransByZip transByZip = new TransByZip();
+                            transByZip = new TransByZip();
+
+                            // CMTE_ID wasn't found, create new mapping between id and zip map
+                            // HashMap<String,TransByZip> zipCodeToTransByZip = new HashMap<String, TransByZip>();
+                            zipCodeToTransByZip = new HashMap<String, TransByZip>();
+                            
+                            // Add transaction
+                            transByZip.addTransAmt(transAmtDouble);
+
+                            // Update streaming total amount
+                            transByZip.setTotalAmount(transAmtDouble);
+
+                            // Update streaming total contributions
+                            transByZip.setTotalContributions();
+
+                            // Rebalance
+                            transByZip.rebalanceHeaps();
+
+                            Double runningMedium = transByZip.getMedian();
+                            Integer totalContributions = transByZip.getTotalContributions();
+                            Double totalAmount = transByZip.getTotalAmount();
+
+                            // Check
+                            System.out.println(String.format ("%s|%s|%s|%s|%s", cmteId, zipCode, Double.toString(runningMedium), Integer.toString(totalContributions), Double.toString(totalAmount)));
+                            
+                            // Track zipcode to transactions by zipcode
+                            zipCodeToTransByZip.put(zipCode, transByZip);
+
+                            // Track cmteid to zipCodeMap
+                            cmteIdToZipCodeMap.put(cmteId, zipCodeToTransByZip);
+                        }
+                    }
+
+                    // Check if cmteId is a key in the cmteIdToTransDateMap
+
+                }
             }
+            // for(Map.Entry m:cmteIdToZip.entrySet()){  
+            //     System.out.println(m.getKey()+" "+m.getValue());  
+            // }  
 
             // Always close files.
             bufferedReader.close();
@@ -50,3 +198,4 @@ public class findPoliticalDonors {
         parseInput(fileName);
     }
 }
+
